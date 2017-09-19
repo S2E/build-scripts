@@ -477,7 +477,7 @@ stamps/libcoroutine-release-make: stamps/libcoroutine-release-configure
 # QEMU #
 ########
 
-QEMU_TARGETS=i386-softmmu,x86_64-softmmu
+QEMU_TARGETS=i386-softmmu,x86_64-softmmu,arm-softmmu
 
 QEMU_CONFIGURE_FLAGS = --prefix=$(S2EPREFIX)         \
                        --target-list=$(QEMU_TARGETS) \
@@ -511,7 +511,6 @@ stamps/qemu-debug-make:  stamps/qemu-debug-configure
 stamps/qemu-release-make: stamps/qemu-release-configure
 	$(MAKE) -C qemu-release $(BUILD_OPTS) install
 	touch $@
-
 
 ##########
 # libs2e #
@@ -572,6 +571,7 @@ stamps/libs2e-release-install: stamps/libs2e-release-make
 
 	install $(S2EBUILD)/libs2e-release/x86_64-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-x86_64.so
 	install $(S2EBUILD)/libs2e-release/i386-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-i386.so
+	install $(S2EBUILD)/libs2e-release/arm-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-arm.so
 
 	install $(S2EBUILD)/libs2e-release/x86_64-s2e-softmmu/op_helper.bc.x86_64 $(S2EPREFIX)/share/libs2e/
 	install $(S2EBUILD)/libs2e-release/x86_64-s2e-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-x86_64-s2e.so
@@ -579,11 +579,17 @@ stamps/libs2e-release-install: stamps/libs2e-release-make
 	install $(S2EBUILD)/libs2e-release/i386-s2e-softmmu/op_helper.bc.i386  $(S2EPREFIX)/share/libs2e/
 	install $(S2EBUILD)/libs2e-release/i386-s2e-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-i386-s2e.so
 
+	install $(S2EBUILD)/libs2e-release/arm-s2e-softmmu/op_helper.bc.arm $(S2EPREFIX)/share/libs2e/
+	install $(S2EBUILD)/libs2e-release/arm-s2e-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-arm-s2e.so
+
 	install $(S2EBUILD)/libs2e-release/x86_64-s2e_sp-softmmu/op_helper_sp.bc.x86_64 $(S2EPREFIX)/share/libs2e/
 	install $(S2EBUILD)/libs2e-release/x86_64-s2e_sp-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-x86_64-s2e_sp.so
 
 	install $(S2EBUILD)/libs2e-release/i386-s2e_sp-softmmu/op_helper_sp.bc.i386  $(S2EPREFIX)/share/libs2e/
 	install $(S2EBUILD)/libs2e-release/i386-s2e_sp-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-i386-s2e_sp.so
+
+	install $(S2EBUILD)/libs2e-release/arm-s2e_sp-softmmu/op_helper_sp.bc.arm $(S2EPREFIX)/share/libs2e/
+	install $(S2EBUILD)/libs2e-release/arm-s2e_sp-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-arm-s2e_sp.so
 
 	install $(S2ESRC)/libs2eplugins/src/s2e/Plugins/Support/KeyValueStore.py $(S2EPREFIX)/bin/
 	cd $(S2ESRC) && if [ -d ".git" ]; then git rev-parse HEAD > $(S2EPREFIX)/share/libs2e/git-sha1; fi
@@ -608,6 +614,12 @@ stamps/libs2e-debug-install: stamps/libs2e-debug-make
 
 	install $(S2EBUILD)/libs2e-debug/i386-s2e_sp-softmmu/op_helper_sp.bc.i386  $(S2EPREFIX)/share/libs2e/
 	install $(S2EBUILD)/libs2e-debug/i386-s2e_sp-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-i386-s2e_sp.so
+
+	install $(S2EBUILD)/libs2e-debug/arm-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-arm.so
+	install $(S2EBUILD)/libs2e-debug/arm-s2e-softmmu/op_helper.bc.arm $(S2EPREFIX)/share/libs2e/
+	install $(S2EBUILD)/libs2e-debug/arm-s2e-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-arm-s2e.so
+	install $(S2EBUILD)/libs2e-debug/arm-s2e_sp-softmmu/op_helper_sp.bc.arm $(S2EPREFIX)/share/libs2e/
+	install $(S2EBUILD)/libs2e-debug/arm-s2e_sp-softmmu/libs2e.so $(S2EPREFIX)/share/libs2e/libs2e-arm-s2e_sp.so
 
 	install $(S2ESRC)/libs2eplugins/src/s2e/Plugins/Support/KeyValueStore.py $(S2EPREFIX)/bin/
 	cd $(S2ESRC) && if [ -d ".git" ]; then git rev-parse HEAD > $(S2EPREFIX)/share/libs2e/git-sha1; fi
@@ -710,7 +722,6 @@ stamps/guest-tools%-win-install: stamps/guest-tools%-win-make guest-tools32-wind
 
 stamps/guest-tools%-install: stamps/guest-tools%-make guest-tools32-windrv guest-tools64-windrv
 	$(MAKE) -C guest-tools$* install
-
 
 ##########
 # DECREE #
