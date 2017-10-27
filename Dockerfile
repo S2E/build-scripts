@@ -14,7 +14,7 @@ RUN apt-get update &&                                                       \
 
 # Install S2E dependencies
 RUN apt-get update && apt-get -y install libdwarf-dev libelf-dev            \
-    libboost-dev zlib1g-dev libjemalloc-dev nasm pkg-config                 \
+    binutils-dev libboost-dev zlib1g-dev libjemalloc-dev nasm pkg-config    \
     libmemcached-dev libpq-dev libc6-dev-i386 libprocps4-dev                \
     libboost-system-dev libboost-serialization-dev libboost-regex-dev       \
     libprotobuf-dev protobuf-compiler libbsd-dev                            \
