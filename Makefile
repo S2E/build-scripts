@@ -540,6 +540,7 @@ LIBS2E_CONFIGURE_FLAGS = --with-cc=$(CLANG_CC)                                  
                          --with-libcpu-src=$(S2ESRC)/libcpu                         \
                          --with-libs2ecore-src=$(S2ESRC)/libs2ecore                 \
                          --with-libs2eplugins-src=$(S2ESRC)/libs2eplugins           \
+                         --enable-python-plugins                                    \
                          $(EXTRA_QEMU_FLAGS)
 
 LIBS2E_DEBUG_FLAGS = --with-llvm=$(LLVMBUILD)/llvm-debug                            \
