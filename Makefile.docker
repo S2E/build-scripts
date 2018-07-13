@@ -16,7 +16,7 @@ endif
 S2ESRC?=$(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 S2EBUILD:=$(CURDIR)
 
-DOCKER_PREFIX=cyberhaven
+DOCKER_PREFIX?=cyberhaven
 
 ##########
 # Docker #
