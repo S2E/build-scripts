@@ -52,7 +52,7 @@ CXXFLAGS_ARCH:=-march=$(BUILD_ARCH) -mno-sse4.1
 
 # TODO: figure out how to automatically get the latest version without
 # having to update this URL.
-GUEST_TOOLS_BINARIES_URL=https://github.com/S2E/guest-tools/releases/download/v2.0.0/
+GUEST_TOOLS_BINARIES_URL=https://github.com/S2E/guest-tools/releases/download/v2.0.2/
 
 # LLVM variables
 LLVM_BUILD?=$(S2E_BUILD)
