@@ -45,6 +45,7 @@ for EXT in ${FILE_EXTS}; do
         -not -path "./guest/windows/*"              \
         -not -path "./lua/*"                        \
         -not -path "./qemu/*"                       \
+        -not -path "./testsuite/pov-cgc-cadet0/CADET_00001/*" \
         -not -path "./build-scripts/*"              \
         -exec ${CLANG_FORMAT} -i -style=file {} +
 done
