@@ -1,0 +1,61 @@
+# Copyright (C) 2017-2020, Cyberhaven
+# All rights reserved.
+#
+# Licensed under the Cyberhaven Research License Agreement.
+
+QEMU_SRC?=$(realpath $(REPO_DIR)/qemu)
+
+all-release: stamps/qemu-release-install
+all-debug: stamps/qemu-debug-install
+
+qemu-debug qemu-release:
+	mkdir -p $@
+
+
+########
+# QEMU #
+########
+
+QEMU_TARGETS=i386-softmmu,x86_64-softmmu
+
+QEMU_CONFIGURE_FLAGS = --prefix=$(S2E_PREFIX)        \
+                       --target-list=$(QEMU_TARGETS) \
+                       --disable-smartcard           \
+                       --disable-virtfs              \
+                       --disable-xen                 \
+                       --disable-bluez               \
+                       --disable-vde                 \
+                       --disable-libiscsi            \
+                       --disable-docs                \
+                       --disable-spice               \
+                       $(EXTRA_QEMU_FLAGS)
+
+QEMU_DEBUG_FLAGS = --enable-debug
+
+QEMU_RELEASE_FLAGS =
+
+stamps/qemu-debug-configure: export CFLAGS:=$(CFLAGS_ARCH) -fno-omit-frame-pointer
+stamps/qemu-debug-configure: export CXXFLAGS:=$(CXXFLAGS_RELEASE) -fno-omit-frame-pointer
+stamps/qemu-debug-configure: CONFIGURE_COMMAND = $(QEMU_SRC)/configure  \
+                                                 $(QEMU_CONFIGURE_FLAGS)    \
+                                                 $(QEMU_DEBUG_FLAGS)
+
+stamps/qemu-release-configure: CONFIGURE_COMMAND = $(QEMU_SRC)/configure    \
+                                                   $(QEMU_CONFIGURE_FLAGS)      \
+                                                   $(QEMU_RELEASE_FLAGS)
+
+stamps/qemu-debug-make: stamps/qemu-debug-configure
+	$(MAKE) -C qemu-debug
+	touch $@
+
+stamps/qemu-debug-install: stamps/qemu-debug-make
+	$(MAKE) -C qemu-debug install
+	touch $@
+
+stamps/qemu-release-make: stamps/qemu-release-configure
+	$(MAKE) -C qemu-release
+	touch $@
+
+stamps/qemu-release-install: stamps/qemu-release-make
+	$(MAKE) -C qemu-release install
+	touch $@

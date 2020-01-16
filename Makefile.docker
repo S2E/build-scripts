@@ -1,4 +1,4 @@
-# Copyright (C) 2017, Cyberhaven
+# Copyright (C) 2017-2020, Cyberhaven
 # All rights reserved.
 #
 # Licensed under the Cyberhaven Research License Agreement.
@@ -13,8 +13,9 @@ ifeq ($(shell ls libs2e/src/libs2e.c 2>&1),libs2e/src/libs2e.c)
 endif
 
 # S2E variables
-BUILD_SCRIPTS_SRC?=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-S2E_SRC?=$(realpath $(BUILD_SCRIPTS_SRC)/../)
+BUILD_SCRIPTS_DIR?=$(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+REPO_ROOT=$(BUILD_SCRIPTS_DIR)/../
+LIBS2E_SRC?=$(REPO_ROOT)/s2e
 S2E_BUILD:=$(CURDIR)
 
 DOCKER_PREFIX=cyberhaven
@@ -27,9 +28,14 @@ stamps:
 	mkdir -p $@
 
 # Build S2E inside a docker container
-stamps/docker-s2e-build: | stamps
+stamps/docker-libs2e-build: | stamps
+	echo Building libs2e inside docker container...
+	cd $(LIBS2E_SRC) && docker build -t $(DOCKER_PREFIX)/libs2e-build -f Dockerfile .
+	touch $@
+
+stamps/docker-s2e-build: stamps/docker-libs2e-build
 	echo Building S2E inside docker container...
-	cd $(S2E_SRC) && docker build -t $(DOCKER_PREFIX)/s2e-build -f Dockerfile .
+	cd $(REPO_ROOT) && docker build -t $(DOCKER_PREFIX)/s2e-build -f build-scripts/Dockerfile .
 	touch $@
 
 $(S2E_BUILD)/docker $(S2E_BUILD)/docker-demo:
@@ -39,13 +45,13 @@ $(S2E_BUILD)/docker $(S2E_BUILD)/docker-demo:
 # Note: it is not possible to simply delete build files from the s2e-build
 # container, because docker would still keep intermediate layers.
 # That would make the cyberhaven/s2e container unnecessarily large.
-stamps/docker-s2e: stamps/docker-s2e-build $(S2E_BUILD)/docker $(BUILD_SCRIPTS_SRC)/Dockerfile.dist
+stamps/docker-s2e: stamps/docker-s2e-build $(S2E_BUILD)/docker $(BUILD_SCRIPTS_DIR)/Dockerfile.dist
 	echo Preparing docker build folder...
-	cp $(BUILD_SCRIPTS_SRC)/Dockerfile.dist $(S2E_BUILD)/docker
-	rsync -av --delete --exclude=venv --exclude=.git $(S2E_SRC)/s2e-env $(S2E_BUILD)/docker/
+	cp $(BUILD_SCRIPTS_DIR)/Dockerfile.dist $(S2E_BUILD)/docker
+	rsync -av --delete --exclude=venv --exclude=.git $(REPO_ROOT)/s2e-env $(S2E_BUILD)/docker/
 
 	echo Extracting /opt/s2e from build image
-	cd $(S2E_BUILD)/docker && $(BUILD_SCRIPTS_SRC)/extract-docker-dir.sh $(DOCKER_PREFIX)/s2e-build /opt/s2e .
+	cd $(S2E_BUILD)/docker && $(BUILD_SCRIPTS_DIR)/extract-docker-dir.sh $(DOCKER_PREFIX)/s2e-build /opt/s2e .
 
 	echo Building $(DOCKER_PREFIX)/s2e
 	cd $(S2E_BUILD)/docker &&  docker build --force-rm=true -t $(DOCKER_PREFIX)/s2e -f Dockerfile.dist .
@@ -54,7 +60,7 @@ stamps/docker-s2e: stamps/docker-s2e-build $(S2E_BUILD)/docker $(BUILD_SCRIPTS_S
 
 stamps/decree-demo: $(S2E_BUILD)/docker-demo stamps/docker-s2e
 	echo Building demo...
-	cp -r $(BUILD_SCRIPTS_SRC)/demo/* $(S2E_BUILD)/docker-demo
-	cp $(S2E_SRC)/decree/samples/* $(S2E_BUILD)/docker-demo
+	cp -r $(BUILD_SCRIPTS_DIR)/demo/* $(S2E_BUILD)/docker-demo
+	cp $(REPO_ROOT)/decree/samples/* $(S2E_BUILD)/docker-demo
 	cd $(S2E_BUILD)/docker-demo && docker build -t $(DOCKER_PREFIX)/s2e-demo -f Dockerfile.demo .
 	touch $@
