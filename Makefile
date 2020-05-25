@@ -625,6 +625,7 @@ QEMU_CONFIGURE_FLAGS = --prefix=$(S2E_PREFIX)        \
                        --disable-libiscsi            \
                        --disable-docs                \
                        --disable-spice               \
+					   --disable-strip               \
                        $(EXTRA_QEMU_FLAGS)
 
 QEMU_DEBUG_FLAGS = --enable-debug
