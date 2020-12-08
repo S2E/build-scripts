@@ -613,7 +613,7 @@ stamps/libcoroutine-release-make: stamps/libcoroutine-release-configure $(call F
 # QEMU #
 ########
 
-QEMU_TARGETS=i386-softmmu,x86_64-softmmu
+QEMU_TARGETS=i386-softmmu,x86_64-softmmu,arm-softmmu
 
 QEMU_CONFIGURE_FLAGS = --prefix=$(S2E_PREFIX)        \
                        --target-list=$(QEMU_TARGETS) \
@@ -625,6 +625,8 @@ QEMU_CONFIGURE_FLAGS = --prefix=$(S2E_PREFIX)        \
                        --disable-libiscsi            \
                        --disable-docs                \
                        --disable-spice               \
+					   --disable-strip               \
+					   --enable-debug
                        $(EXTRA_QEMU_FLAGS)
 
 QEMU_DEBUG_FLAGS = --enable-debug
@@ -724,6 +726,7 @@ stamps/libs2e-release-install: stamps/libs2e-release-make
 
 	install $(S2E_BUILD)/libs2e-release/x86_64-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-x86_64.so
 	install $(S2E_BUILD)/libs2e-release/i386-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-i386.so
+	install $(S2E_BUILD)/libs2e-release/arm-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-arm.so
 
 	install $(S2E_BUILD)/libs2e-release/x86_64-s2e-softmmu/op_helper.bc.x86_64 $(S2E_PREFIX)/share/libs2e/
 	install $(S2E_BUILD)/libs2e-release/x86_64-s2e-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-x86_64-s2e.so
@@ -731,11 +734,17 @@ stamps/libs2e-release-install: stamps/libs2e-release-make
 	install $(S2E_BUILD)/libs2e-release/i386-s2e-softmmu/op_helper.bc.i386  $(S2E_PREFIX)/share/libs2e/
 	install $(S2E_BUILD)/libs2e-release/i386-s2e-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-i386-s2e.so
 
+	install $(S2E_BUILD)/libs2e-release/arm-s2e-softmmu/op_helper.bc.arm $(S2E_PREFIX)/share/libs2e/
+	install $(S2E_BUILD)/libs2e-release/arm-s2e-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-arm-s2e.so
+
 	install $(S2E_BUILD)/libs2e-release/x86_64-s2e_sp-softmmu/op_helper_sp.bc.x86_64 $(S2E_PREFIX)/share/libs2e/
 	install $(S2E_BUILD)/libs2e-release/x86_64-s2e_sp-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-x86_64-s2e_sp.so
 
 	install $(S2E_BUILD)/libs2e-release/i386-s2e_sp-softmmu/op_helper_sp.bc.i386  $(S2E_PREFIX)/share/libs2e/
 	install $(S2E_BUILD)/libs2e-release/i386-s2e_sp-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-i386-s2e_sp.so
+
+	install $(S2E_BUILD)/libs2e-release/arm-s2e_sp-softmmu/op_helper_sp.bc.arm $(S2E_PREFIX)/share/libs2e/
+	install $(S2E_BUILD)/libs2e-release/arm-s2e_sp-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-arm-s2e_sp.so
 
 	install $(S2E_SRC)/libs2eplugins/src/s2e/Plugins/Support/KeyValueStore.py $(S2E_PREFIX)/bin/
 	cd $(S2E_SRC) && if [ -d ".git" ]; then git rev-parse HEAD > $(S2E_PREFIX)/share/libs2e/git-sha1; fi
@@ -749,17 +758,25 @@ stamps/libs2e-debug-install: stamps/libs2e-debug-make
 
 	install $(S2E_BUILD)/libs2e-debug/i386-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-i386.so
 
+	install $(S2E_BUILD)/libs2e-debug/arm-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-arm.so
+
 	install $(S2E_BUILD)/libs2e-debug/x86_64-s2e-softmmu/op_helper.bc.x86_64 $(S2E_PREFIX)/share/libs2e/
 	install $(S2E_BUILD)/libs2e-debug/x86_64-s2e-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-x86_64-s2e.so
 
 	install $(S2E_BUILD)/libs2e-debug/i386-s2e-softmmu/op_helper.bc.i386  $(S2E_PREFIX)/share/libs2e/
 	install $(S2E_BUILD)/libs2e-debug/i386-s2e-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-i386-s2e.so
 
+	install $(S2E_BUILD)/libs2e-debug/arm-s2e-softmmu/op_helper.bc.arm $(S2E_PREFIX)/share/libs2e/
+	install $(S2E_BUILD)/libs2e-debug/arm-s2e-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-arm-s2e.so
+
 	install $(S2E_BUILD)/libs2e-debug/x86_64-s2e_sp-softmmu/op_helper_sp.bc.x86_64 $(S2E_PREFIX)/share/libs2e/
 	install $(S2E_BUILD)/libs2e-debug/x86_64-s2e_sp-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-x86_64-s2e_sp.so
 
 	install $(S2E_BUILD)/libs2e-debug/i386-s2e_sp-softmmu/op_helper_sp.bc.i386  $(S2E_PREFIX)/share/libs2e/
 	install $(S2E_BUILD)/libs2e-debug/i386-s2e_sp-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-i386-s2e_sp.so
+
+	install $(S2E_BUILD)/libs2e-debug/arm-s2e_sp-softmmu/op_helper_sp.bc.arm $(S2E_PREFIX)/share/libs2e/
+	install $(S2E_BUILD)/libs2e-debug/arm-s2e_sp-softmmu/libs2e.so $(S2E_PREFIX)/share/libs2e/libs2e-arm-s2e_sp.so
 
 	install $(S2E_SRC)/libs2eplugins/src/s2e/Plugins/Support/KeyValueStore.py $(S2E_PREFIX)/bin/
 	cd $(S2E_SRC) && if [ -d ".git" ]; then git rev-parse HEAD > $(S2E_PREFIX)/share/libs2e/git-sha1; fi
